@@ -1,4 +1,5 @@
 __pycache__/
+asr_venv/
 *.pyc
 .env
 *.mp4
