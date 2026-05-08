@@ -27,7 +27,7 @@ image_converter = build_image_converter()
 app = FastAPI(title="Docling Multi-Format API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["https://docling-asr-frontend.onrender.com"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
