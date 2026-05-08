@@ -1,6 +1,7 @@
 # main.py (updated)
 import shutil
 import tempfile
+import uuid
 from pathlib import Path
 import time
 
@@ -15,6 +16,7 @@ AUDIO_VIDEO_FORMATS = {".mp3", ".wav", ".mp4", ".mov", ".avi", ".m4a", ".ogg"}
 IMAGE_FORMATS       = {".png", ".jpg", ".jpeg", ".tiff", ".bmp"}
 PDF_FORMATS         = {".pdf", ".docx"}
 
+DATA_LIST = []  # Placeholder for future data storage (e.g., in-memory or database)
 
 # Load all three converters once at startup
 asr_converter   = build_asr_converter()
@@ -81,23 +83,27 @@ async def convert(
         end_time = time.perf_counter()
         processing_time = end_time - start_time
 
-        return JSONResponse({
-            "processing_time": processing_time,
+        structured_response = {
+            "id": str(uuid.uuid4()),
+            "processingTime": processing_time.__round__(2),
             "title": file.filename,
             "pipeline": pipeline,
             "format":   output_format,
             "engine":   engine,
             "transcript":  content,
-        })
+        }
+
+        DATA_LIST.append(structured_response)  # Store the result for future retrieval
+        return JSONResponse(structured_response)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         tmp_path.unlink(missing_ok=True)
 
-
+@app.get("/converted-data")
 async def get_converted_data():
     # Placeholder for future implementation
-    return {"message": "This endpoint will return converted data."}
+    return DATA_LIST
 
 
 @app.get("/health")
