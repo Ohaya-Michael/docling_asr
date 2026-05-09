@@ -14,7 +14,8 @@ from docling_fxns import build_asr_converter, build_pdf_converter, build_image_c
 # Define supported formats
 AUDIO_VIDEO_FORMATS = {".mp3", ".wav", ".mp4", ".mov", ".avi", ".m4a", ".ogg"}
 IMAGE_FORMATS       = {".png", ".jpg", ".jpeg", ".tiff", ".bmp"}
-PDF_FORMATS         = {".pdf", ".docx"}
+DOC_FORMATS         = {".docx", ".doc"}
+PDF_FORMATS         = {".pdf"}
 
 DATA_LIST = []  # Placeholder for future data storage (e.g., in-memory or database)
 
@@ -58,6 +59,11 @@ async def convert(
         converter = image_converter
         pipeline  = "ocr"
         engine = "WHISPER_TURBO"  # Placeholder for future engine selection
+    elif suffix in DOC_FORMATS:
+        # Rebuild if do_ocr differs from default, else reuse cached
+        converter = build_pdf_converter(do_ocr=do_ocr)
+        pipeline  = "doc"
+        engine = "DOCLING"  # Placeholder for future engine selection
     else:
         raise HTTPException(
             status_code=400,
